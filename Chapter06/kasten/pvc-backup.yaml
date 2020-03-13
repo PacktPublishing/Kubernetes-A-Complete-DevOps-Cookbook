@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc2backup
+  namespace: backup-example
+  labels:
+    app: app2backup
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: openebs-cstor-default
+  resources:
+    requests:
+      storage: 4Gi
