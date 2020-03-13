@@ -1,0 +1,53 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: mysql
+  namespace: falcotest
+  labels:
+    name: mysql-deployment
+    app: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: mysql
+     role: mysqldb
+     app: demo
+  template:
+    spec:
+      containers:
+        - name: mysql
+          image: bencer/workshop-forensics-1-mysql
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: foobar
+          - name: MYSQL_DATABASE
+            value: employees
+          - name: SYSDIG_AGENT_CONF
+            value: 'app_checks: [{name: mysql, check_module: mysql, pattern: {comm: mysqld}, conf: { server: 127.0.0.1, user: root, pass: foobar }}]'
+    metadata:
+      labels:
+        name: mysql
+        role: mysqldb
+        app: demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mysql
+  name: mysql
+  namespace: falcotest
+spec:
+  clusterIP: "None"
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    name: mysql
+    app: demo
+    role: mysqldb
+---

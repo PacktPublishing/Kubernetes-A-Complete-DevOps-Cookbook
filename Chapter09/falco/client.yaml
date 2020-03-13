@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: falcotest
+spec:
+  containers:
+  - args:
+    - sh
+    - -c
+    - while true; do curl www.google.com; sleep 30; done
+    image: tutum/curl
+    name: client

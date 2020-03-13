@@ -1,0 +1,25 @@
+customRules:
+  falco_rules.local.yaml: |-
+    - macro: ping_allowed_dirs
+      condition: evt.arg[1] startswith /var/log/apache2 or evt.arg[1] startswith /var/lib/apache2 or evt.arg[1] startswith /dev/tty
+
+    - rule: Unauthorized process
+      desc: There is a running process not described in the base template
+      condition: spawned_process and container and k8s.ns.name=ping and k8s.deployment.name=ping and not proc.name in (apache2, sh, ping)
+      output: Unauthorized process (%proc.cmdline) running in (%container.id)
+      priority: ERROR
+      tags: [process]
+
+    - rule: Apache writing to non allowed directory
+      desc: Attempt to write to directories that should be immutable
+      condition: open_write and container and k8s.ns.name=ping and k8s.deployment.name=ping and not (ping_allowed_dirs and proc.name in (apache2))
+      output: "Writing to forbidden directory (user=%user.name command=%proc.cmdline file=%fd.name)"
+      priority: ERROR
+      tags: [filesystem]
+
+    - rule: Forbidden network outbound connection
+      desc: A non-whitelisted process is trying to reach the Internet
+      condition: outbound and container and k8s.ns.name=ping and k8s.deployment.name=ping and not proc.name in (ping, apache2)
+      output: Forbidden outbound connection (user=%user.name command=%proc.cmdline connection=%fd.name)
+      priority: ERROR
+      tags: [network]

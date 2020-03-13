@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: deployer-binding
+  namespace: secureapp
+subjects:
+- kind: User
+  name: john.geek
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: deployer
+  apiGroup: ""

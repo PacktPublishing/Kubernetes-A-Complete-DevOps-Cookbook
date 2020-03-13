@@ -1,0 +1,51 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: ping
+  namespace: falcotest
+  labels:
+    name: ping-deployment
+    app: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: ping
+     role: frontend
+     app: demo
+  template:
+    spec:
+      containers:
+        - name: phpping
+          image: bencer/workshop-forensics-1-phpping
+          env:
+          - name: DB_HOST
+            value: mysql.ping.svc.cluster.local
+          ports:
+          - containerPort: 80
+            name: phpping
+    metadata:
+      labels:
+        name: ping
+        role: frontend
+        app: demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: ping
+  name: ping
+  namespace: falcotest
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      nodePort: 31337
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    name: ping
+    app: demo
+    role: frontend
