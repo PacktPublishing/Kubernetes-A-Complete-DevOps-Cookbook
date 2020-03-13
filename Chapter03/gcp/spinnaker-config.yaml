@@ -1,0 +1,35 @@
+gcs:
+  enabled: true
+  bucket: devopscookbook-ci-config
+  project: devopscookbok
+  jsonKey: '$CICDKEY_JSON'
+
+dockerRegistries:
+- name: gcr
+  address: https://gcr.io
+  username: _json_key
+  password: '$CICDKEY_JSON'
+  email: youremail@domain.com
+
+# Disable minio as the default storage backend
+minio:
+  enabled: false
+
+# Configure Spinnaker to enable GCP services
+halyard:
+  spinnakerVersion: 1.10.2
+  image:
+    tag: 1.12.0
+  additionalScripts:
+    create: true
+    data:
+      enable_gcs_artifacts.sh: |-
+        \$HAL_COMMAND config artifact gcs account add gcs-devopscookbook --json-path /opt/gcs/key.json
+        \$HAL_COMMAND config artifact gcs enable
+      enable_pubsub_triggers.sh: |-
+        \$HAL_COMMAND config pubsub google enable
+        \$HAL_COMMAND config pubsub google subscription add gcr-triggers \
+          --subscription-name gcr-triggers \
+          --json-path /opt/gcs/key.json \
+          --project devopscookbook \
+          --message-format GCR
