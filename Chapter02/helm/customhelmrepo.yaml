@@ -1,0 +1,10 @@
+env:
+  open:
+    STORAGE: local
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  secret:
+    BASIC_AUTH_USER: helmcurator
+    BASIC_AUTH_PASS: myhelmpassword

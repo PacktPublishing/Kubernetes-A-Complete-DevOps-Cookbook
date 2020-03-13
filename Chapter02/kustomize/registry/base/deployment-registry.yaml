@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-registry-v1
+  labels:
+    app: kube-registry
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kube-registry
+    spec:
+      containers:
+      - image: registry:2
+        name: registry
+        volumeMounts:
+        - name: docker
+          mountPath: /var/run/docker.sock
+        - name: registry-storage
+          mountPath: /var/lib/registry
+        ports:
+        - containerPort: 5000
+          name: registry     
+      - name: registryui
+        image: hyper/docker-registry-web:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: REGISTRY_URL
+          value: http://localhost:5000/v2
+        - name: REGISTRY_NAME
+          value: cluster-registry
+      volumes:
+      - name: docker
+        hostPath:
+          path: /var/run/docker.sock
+      - name: registry-storage
+        persistentVolumeClaim:
+          claimName: registry-pvc
