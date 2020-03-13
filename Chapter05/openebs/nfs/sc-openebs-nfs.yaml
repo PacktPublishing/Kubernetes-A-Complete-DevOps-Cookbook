@@ -1,0 +1,8 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass # Creating storage class for applications to point to openebs-nfs-provisioner
+metadata:
+ name: openebs-nfs
+provisioner: openebs.io/nfs 
+parameters:
+ mountOptions: "vers=4.1"  # TODO: reconcile with StorageClass.mountOptions

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-gcedisk1
+spec:
+  storageClassName: ""
+  volumeName: gce-disk-1
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500G
