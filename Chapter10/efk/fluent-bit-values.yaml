@@ -1,0 +1,14 @@
+
+backend:
+  type: es
+  es:
+    host: elasticsearch-es-http
+    port: 9200
+    # Optional username credential for Elastic X-Pack access
+    http_user: elastic
+    # Password for user defined in HTTP_User
+    http_passwd: m2zr9fz49zqbkbpksprf4r76
+    # Optional TLS encryption to ElasticSearch instance
+    tls: "on"
+    tls_verify: "off"
+
